@@ -1,42 +1,21 @@
-# Import socket module
 import socket
 
-# In this Line we define our local host
-# address with port number
-SERVER = "127.0.0.1"
-PORT = 8080
-# Making a socket instance
-client = socket.socket(socket.AF_INET,
-					socket.SOCK_STREAM)
-# connect to the server
-client.connect((SERVER, PORT))
-# Running a infinite loop
-while True:
-        
-      
-        print("Example : 4 + 5")
-        # here we get the input from the user
-        inp = input("Enter the operation in the form opreand operator oprenad: ")
-        # If user wants to terminate
-        # the server connection he can type Over
-        
-        
-        if inp != "Over":
-            print("in non termination state")
-            if len(inp) == 0:
-                print("please select operation like + _ etc ")
-            else:
-                # Here we send the user input
-                # to server socket by send Method
-                client.send(inp.encode())
+HOST = '127.0.0.1'  # The server's hostname or IP address
+PORT = 65432        # The port used by the server
 
-                # Here we received output from the server socket
-                answer = client.recv(1024)
-                print("Answer is "+answer.decode())
-                print("Type 'Over' to terminate")
-        else:
-            print("Dont worry")
-            if inp == "Over":
-                break
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect((HOST, PORT))
+    while True:
+        # Get user input for calculation (ensure valid format)
+        expression = input("Enter expression (number1 operator number2): ")
+        if not expression.strip():
+            break
 
-client.close()
+        # Send expression to the server
+        s.sendall(expression.encode())
+
+        # Receive response from the server and display it
+        data = s.recv(1024).decode()
+        print(data)
+
+print('Connection closed')
